@@ -1,0 +1,22 @@
+{
+    "name": "bookbug",
+    "version": "1.0.0",
+    "description": "This is an E-book api project",
+    "main": "index.js",
+    "scripts": {
+        "dev": ""
+    },
+    "keywords": [
+        "rest",
+        "api",
+        "express"
+    ],
+    "author": "Shaikh Mohammad Umar Farooq <shaikhumar06122001@gmail.com>",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^22.7.4",
+        "nodemon": "^3.1.7",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.6.2"
+    }
+}
