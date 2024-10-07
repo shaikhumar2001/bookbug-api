@@ -4,7 +4,7 @@
     "description": "This is an E-book api project",
     "main": "index.js",
     "scripts": {
-        "dev": ""
+        "dev": "nodemon server.ts"
     },
     "keywords": [
         "rest",
