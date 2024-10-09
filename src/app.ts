@@ -1,5 +1,5 @@
 import express from "express";
-import createHttpError from "http-errors";
+// import createHttpError from "http-errors";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import userRouter from "./user/userRouter";
 

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import userModel from "./userModel";
 import createHttpError from "http-errors";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -9,6 +10,18 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         const error = createHttpError(400, "All fields are required");
         return next(error);
     }
+
+    // Database
+    const user = await userModel.findOne({ email });
+
+    if (user) {
+        const error = createHttpError(
+            400,
+            "User already exists with this email"
+        );
+        return next(error);
+    }
+
     // Process
     // Response
 
