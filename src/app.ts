@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Routes
 app.get("/", (req, res, next) => {
-    throw createHttpError(400, "something went wrong!");
+    // throw createHttpError(400, "something went wrong!");
     res.json({ message: "Welcome to Book Bug api" });
 });
 
