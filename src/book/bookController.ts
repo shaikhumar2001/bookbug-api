@@ -69,7 +69,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
             );
         }
 
-        res.json({ message: "Book Created" });
+        res.status(201).json({ _id: newBook._id });
     } catch (err) {
         return next(createHttpError(500, "Error while uploading files"));
     }
