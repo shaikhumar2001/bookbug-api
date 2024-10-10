@@ -42,6 +42,9 @@ build/Release
 node_modules/
 jspm_packages/
 
+# File Upload Data
+public
+
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 

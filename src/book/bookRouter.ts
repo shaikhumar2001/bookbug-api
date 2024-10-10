@@ -1,14 +1,16 @@
+import path from "node:path";
 import express from "express";
 import { createBook } from "./bookController";
 import multer from "multer";
-import path from "node:path";
 
 const bookRouter = express.Router();
 
 // Multer setup
+const preFileDestination = path.resolve(__dirname, "../../public/data/uploads");
+// const fileDestination = preFileDestination.replace(/\\/g, "/");
 const upload = multer({
-    dest: path.resolve(__dirname, "../../public/data/uploads"),
-    limits: { fileSize: 3e7 },
+    dest: preFileDestination,
+    limits: { fileSize: 1e7 },
 });
 
 // Routes
