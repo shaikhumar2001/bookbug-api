@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { config } from "../config/config";
+import { User } from "./userTypes";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password } = req.body;
@@ -14,36 +15,47 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         return next(error);
     }
 
-    // Database
-    const user = await userModel.findOne({ email });
+    // Search of duplicates in Database
+    try {
+        const user = await userModel.findOne({ email });
 
-    if (user) {
-        const error = createHttpError(
-            400,
-            "User already exists with this email"
-        );
-        return next(error);
+        if (user) {
+            const error = createHttpError(
+                400,
+                "User already exists with this email"
+            );
+            return next(error);
+        }
+    } catch (err) {
+        return next(createHttpError(500, "Error while getting user"));
     }
 
     // Password hashing
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create User
-    const newUser = await userModel.create({
-        name,
-        email,
-        password: hashedPassword,
-    });
+    let newUser: User;
+    try {
+        newUser = await userModel.create({
+            name,
+            email,
+            password: hashedPassword,
+        });
+    } catch (err) {
+        return next(createHttpError(500, "Error while creating user"));
+    }
 
     // JWT token generation
-    const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
-        expiresIn: "30d",
-        algorithm: "HS256",
-    });
-
-    // Response
-
-    res.json({ accessToken: token });
+    try {
+        const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
+            expiresIn: "30d",
+            algorithm: "HS256",
+        });
+        // Response
+        res.json({ accessToken: token });
+    } catch (err) {
+        return next(createHttpError(500, "Error while signing JWT token"));
+    }
 };
 
 export { createUser };
