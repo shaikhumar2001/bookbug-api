@@ -10,3 +10,7 @@ export interface Book {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface FileType {
+    [fieldname: string]: Express.Multer.File[];
+}
