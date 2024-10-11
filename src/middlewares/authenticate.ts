@@ -3,7 +3,7 @@ import { verify } from "jsonwebtoken";
 import { config } from "../config/config";
 import createHttpError from "http-errors";
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
     userId: string;
 }
 
