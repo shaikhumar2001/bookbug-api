@@ -81,7 +81,12 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     const bookId = req.params.bookId;
 
     // Find book
-    const book = await bookModel.findOne({ _id: bookId });
+    let book;
+    try {
+        book = await bookModel.findOne({ _id: bookId });
+    } catch (err) {
+        return next(createHttpError(404, "Book not found, invalid book id"));
+    }
 
     // Validate book
     if (!book) {
@@ -167,4 +172,23 @@ const getBooks = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { createBook, updateBook, getBooks };
+const getSingleBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const bookId = req.params.bookId;
+    try {
+        const book = await bookModel.findOne({ _id: bookId });
+
+        if (!book) {
+            return next(createHttpError(404, "Book not found"));
+        }
+
+        res.status(200).json(book);
+    } catch (err) {
+        return next(createHttpError(500, "Error while getting Book"));
+    }
+};
+
+export { createBook, updateBook, getBooks, getSingleBook };
