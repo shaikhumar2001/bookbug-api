@@ -179,7 +179,12 @@ const getSingleBook = async (
 ) => {
     const bookId = req.params.bookId;
     try {
-        const book = await bookModel.findOne({ _id: bookId });
+        let book;
+        try {
+            book = await bookModel.findOne({ _id: bookId });
+        } catch (err) {
+            return next(createHttpError(400, "Invalid book id"));
+        }
 
         if (!book) {
             return next(createHttpError(404, "Book not found"));
@@ -191,4 +196,55 @@ const getSingleBook = async (
     }
 };
 
-export { createBook, updateBook, getBooks, getSingleBook };
+const deleteSingleBook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const bookId = req.params.bookId;
+
+    // Find book
+    let book;
+    try {
+        book = await bookModel.findOne({ _id: bookId });
+    } catch (err) {
+        return next(createHttpError(404, "Invalid book id"));
+    }
+
+    // Validate book
+    if (!book) {
+        return next(createHttpError(404, "Book not found"));
+    }
+
+    // Check Access / Validate Author
+    const _req = req as AuthRequest;
+    if (book.author.toString() !== _req.userId) {
+        return next(createHttpError(403, "You cannot update others book"));
+    }
+
+    // Delete files from Cloudinary
+    const coverImageSplits = book.coverImage.split("/");
+    const coverImagePublicId = `${coverImageSplits.at(-2)}/${coverImageSplits
+        .at(-1)
+        ?.split(".")
+        .at(-2)}`;
+
+    const fileSplits = book.file.split("/");
+    const filePublicId = `${fileSplits.at(-2)}/${fileSplits.at(-1)}`;
+
+    // log
+    console.log(coverImagePublicId);
+    console.log(filePublicId);
+
+    await cloudinary.uploader.destroy(coverImagePublicId);
+    await cloudinary.uploader.destroy(filePublicId, {
+        resource_type: "raw",
+    });
+
+    // Delete files from Database
+    await bookModel.deleteOne({ _id: bookId });
+
+    res.sendStatus(204);
+};
+
+export { createBook, updateBook, getBooks, getSingleBook, deleteSingleBook };
