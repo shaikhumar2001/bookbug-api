@@ -232,10 +232,6 @@ const deleteSingleBook = async (
     const fileSplits = book.file.split("/");
     const filePublicId = `${fileSplits.at(-2)}/${fileSplits.at(-1)}`;
 
-    // log
-    console.log(coverImagePublicId);
-    console.log(filePublicId);
-
     await cloudinary.uploader.destroy(coverImagePublicId);
     await cloudinary.uploader.destroy(filePublicId, {
         resource_type: "raw",
